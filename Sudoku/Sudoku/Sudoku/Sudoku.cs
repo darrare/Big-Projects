@@ -7,17 +7,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 namespace Sudoku
 {
     public partial class Sudoku : Form
     {
         TextBox[,] boxes = new TextBox[9, 9];
-        List<string> good = new List<string>() { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+        List<char> good = new List<char>() { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+        List<char> selectionOrder = new List<char>();
+
+        List<char[,]> preloaded = new List<char[,]>();
+
+        char[,] board = new char[9, 9];
+        Random rand = new Random();
 
         public Sudoku()
         {
             InitializeComponent();
+            comboBox1.SelectedIndex = 0;
 
             //Bottom left
             boxes[0, 0] = textBox73;
@@ -121,18 +129,57 @@ namespace Sudoku
 
         bool? CheckFinalBoard()
         {
-            string[,] board = new string[9, 9];
+            char[,] board = new char[9, 9];
             for (int i = 0; i < 9; i++)
             {
                 for (int j = 0; j < 9; j++)
                 {
-                    board[i, j] = boxes[i, j].Text;
+                    board[i, j] = boxes[i, j].Text[0];
                 }
             }
             return CheckForCompletion(board);
         }
 
-        bool? CheckForCompletion(string[,] board)
+        private void button3_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    board[i, j] = boxes[i, j].Text[0];
+                }
+            }
+
+            selectionOrder.Clear();
+            do
+            {
+                int i = rand.Next(0, good.Count);
+                selectionOrder.Add(good[i]);
+                good.RemoveAt(i);
+            } while (good.Count > 0);
+            good = new List<char>() { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+
+            DateTime start = DateTime.Now;
+            if (RecursiveSolveSudoku())
+            {
+                for (int i = 0; i < 9; i++)
+                {
+                    for (int j = 0; j < 9; j++)
+                    {
+                        boxes[i, j].Text = board[i, j].ToString();
+                    }
+                }
+                MessageBox.Text = "Board solved in " + (DateTime.Now - start).TotalSeconds + " seconds";
+            }
+            else
+            {
+                MessageBox.Text = "Board not solvable in current state.";
+            }
+
+
+        }
+
+        bool? CheckForCompletion(char[,] board)
         {
             if (CheckVerticals(board) && CheckHorizontals(board) && CheckSections(board))
             {
@@ -141,7 +188,7 @@ namespace Sudoku
                     for (int j = 0; j < 9; j++)
                     {
                         //If the box is empty, we know we haven't won yet
-                        if (board[i, j] == "")
+                        if (board[i, j] == ' ')
                         {
                             return null;
                         }
@@ -152,13 +199,13 @@ namespace Sudoku
             return false;
         }
 
-        bool CheckSections(string[,] board)
+        bool CheckSections(char[,] board)
         {
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    List<string> values = new List<string>();
+                    List<char> values = new List<char>();
                     for (int x = i * 3; x < i * 3 + 3; x++)
                     {
                         for (int y = j * 3; y < j * 3 + 3; y++)
@@ -182,11 +229,11 @@ namespace Sudoku
             return true;
         }
 
-        bool CheckVerticals(string[,] board)
+        bool CheckVerticals(char[,] board)
         {
             for (int i = 0; i < 9; i++)
             {
-                List<string> values = new List<string>();
+                List<char> values = new List<char>();
                 for (int j = 0; j < 9; j++)
                 {
                     values.Add(board[i, j]);
@@ -206,11 +253,11 @@ namespace Sudoku
             return true;
         }
 
-        bool CheckHorizontals(string[,] board)
+        bool CheckHorizontals(char[,] board)
         {
             for (int i = 0; i < 9; i++)
             {
-                List<string> values = new List<string>();
+                List<char> values = new List<char>();
                 for (int j = 0; j < 9; j++)
                 {
                     values.Add(board[j, i]);
@@ -254,68 +301,153 @@ namespace Sudoku
             {
                 for (int j = 0; j < 9; j++)
                 {
-                    boxes[i, j].Text = "";
+                    boxes[i, j].Text = " ";
                     boxes[i, j].Enabled = true;
                 }
             }
 
-            GenerateNewGame();
-        }
-
-        void GenerateNewGame()
-        {
-            RecursiveSolveSudoku(new string[9, 9] { { "", "", "", "", "", "", "", "", "" }, { "", "", "", "", "", "", "", "", "" }, { "", "", "", "", "", "", "", "", "" }, { "", "", "", "", "", "", "", "", "" }, { "", "", "", "", "", "", "", "", "" }, { "", "", "", "", "", "", "", "", "" }, { "", "", "", "", "", "", "", "", "" }, { "", "", "", "", "", "", "", "", "" }, { "", "", "", "", "", "", "", "", "" }, });
-
-            MessageBox.Text = "Finished";
-
-            for (int i = 0; i < 9; i++)
+            if (comboBox1.SelectedIndex == 0)
             {
-                for (int j = 0; j < 9; j++)
-                {
-                    boxes[i, j].Text = completedBoard[i, j];
-                }
+                GenerateNewGame(25);
+            }
+            else if (comboBox1.SelectedIndex == 1)
+            {
+                GenerateNewGame(17);
+            }
+            else if (comboBox1.SelectedIndex == 2)
+            {
+                GenerateNewGame(9);
             }
         }
 
-
-
-        string[,] completedBoard = new string[9, 9];
-        Random rand = new Random();
-        bool RecursiveSolveSudoku(string[,] board)
+        void GenerateNewGame(int count)
         {
+            selectionOrder.Clear();
+            do
+            {
+                int i = rand.Next(0, good.Count);
+                selectionOrder.Add(good[i]);
+                good.RemoveAt(i);
+            } while (good.Count > 0);
+            good = new List<char>() { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+
+            board = new char[9, 9] { { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' }, { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' }, { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' }, { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' }, { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' }, { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' }, { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' }, { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' }, { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' }, };
+            RecursiveSolveSudoku();
+
+            MessageBox.Text = "New Game Started! Good Luck!";
+
+            List<Tuple<int, int>> indices = GetIndicies(count);
+
             for (int i = 0; i < 9; i++)
             {
                 for (int j = 0; j < 9; j++)
                 {
-                    if (board[i,j] == "")
+                    if (!indices.Any(t => t.Item1 == i && t.Item2 == j))
                     {
-                        board[i, j] = GetValidElement(board, i, j);
-                        if (board[i,j] == "")
-                        {
-                            return false;
-                        }
-                        else if (CheckForCompletion(board) == null)
-                        {
-                            return RecursiveSolveSudoku(board.Clone() as string[,]);
-                        }
-                        else if (CheckForCompletion(board) == true)
-                        {
-                            completedBoard = board;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        board[i, j] = ' ';
+                    }
+                    else
+                    {
+                        boxes[i, j].Enabled = false;
                     }
                 }
             }
-            return false;
+
+            for (int i = 0; i < 9; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    boxes[i, j].Text = board[i, j].ToString();
+                }
+            }
         }
 
-        string GetValidElement(string[,] board, int x, int y)
+        List<Tuple<int, int>> GetIndicies(int number)
         {
-            List<string> thingsCannotBe = new List<string>();
+            List<Tuple<int, int>> tuples = new List<Tuple<int, int>>();
+            int count = 0;
+
+            do
+            {
+                Tuple<int, int> index = new Tuple<int, int>(rand.Next(0, 9), rand.Next(0, 9));
+                if (!tuples.Any(t => t.Item1 == index.Item1 && t.Item2 == index.Item2))
+                {
+                    count++;
+                    tuples.Add(index);
+                }
+            } while (count < number);
+            return tuples;
+        }
+
+        bool RecursiveSolveSudoku()
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    if (board[i, j] == ' ')
+                    {
+                        //char[,] board2 = board.Clone() as char[,];
+                        foreach (char s in selectionOrder)
+                        {
+                            if (IsValidElement(board, i, j, s))
+                            {
+                                board[i, j] = s;
+                                if (RecursiveSolveSudoku())
+                                {
+                                    //completedBoard = board;
+                                    return true;
+                                }
+                                else
+                                {
+                                    board[i, j] = ' ';
+                                }
+                            }
+                        }
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        bool IsValidElement(char[,] board, int x, int y, char value)
+        {
+            //check row
+            for (int i = 0; i < 9; i++)
+            {
+                if (board[x,i] == value)
+                {
+                    return false;
+                }
+            }
+
+            //check column
+            for (int i = 0; i < 9; i++)
+            {
+                if (board[i, y] == value)
+                {
+                    return false;
+                }
+            }
+
+            //check box
+            for (int i = x - (x % 3); i < x - (x % 3) + 3; i++)
+            {
+                for (int j = y - (y % 3); j < y - (y % 3) + 3; j++)
+                {
+                    if (board[i,j] == value)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        char GetValidElement(char[,] board, int x, int y)
+        {
+            List<char> thingsCannotBe = new List<char>();
             for (int i = 0; i < 9; i++)
             {
                 if (!thingsCannotBe.Contains(board[x,i]))
@@ -338,22 +470,22 @@ namespace Sudoku
                 }
             }
 
-            List<string> valids = good.Where(t => !thingsCannotBe.Contains(t)).ToList();
+            List<char> valids = good.Where(t => !thingsCannotBe.Contains(t)).ToList();
             if (valids.Count == 0)
-                return "";
+                return ' ';
             return valids[rand.Next(0, valids.Count)];
         }
 
-        bool CheckIsValid(List<string> elements)
+        bool CheckIsValid(List<char> elements)
         {
-            List<string> copy = new List<string>();
-            foreach (string s in elements)
+            List<char> copy = new List<char>();
+            foreach (char s in elements)
             {
-                if (s == "")
+                if (s == ' ')
                 {
                     continue;
                 }
-                if (int.TryParse(s, out int a))
+                if (int.TryParse(s.ToString(), out int a))
                 {
                     if (!copy.Contains(s))
                         copy.Add(s);
@@ -366,6 +498,80 @@ namespace Sudoku
                 }
             }
             return true;
+        }
+
+        int index = 0;
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (preloaded.Count == 0)
+            {
+                List<string> lines = new List<string>();
+                using (StreamReader sr = new StreamReader(Application.StartupPath + "\\examples.txt"))
+                {
+                    string line;
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        lines.Add(line);
+                    }
+                }
+
+                foreach (string line in lines)
+                {
+                    char[,] result = new char[9, 9];
+                    for (int i = 0; i < 9; i++)
+                    {
+                        for (int j = i * 9; j < i * 9 + 9; j++)
+                        {
+                            if (line[j] == '.')
+                            {
+                                result[i, j % 9] = ' ';
+                            }
+                            else
+                            {
+                                result[i, j % 9] = line[j];
+                            }
+                            
+                        }
+                    }
+                    preloaded.Add(result);
+                }
+            }
+
+            LoadPreloaded(preloaded[index]);
+            index++;
+            if (index == preloaded.Count)
+            {
+                index = 0;
+            }
+        }
+
+        void LoadPreloaded(char[,] b)
+        {
+            selectionOrder.Clear();
+            do
+            {
+                int i = rand.Next(0, good.Count);
+                selectionOrder.Add(good[i]);
+                good.RemoveAt(i);
+            } while (good.Count > 0);
+            good = new List<char>() { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+
+            board = b;
+
+            MessageBox.Text = "New Game Started! Good Luck!";
+
+            for (int i = 0; i < 9; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    boxes[i, j].Text = board[i, j].ToString();
+                    boxes[i, j].Enabled = true;
+                    if (board[i,j] != ' ')
+                    {
+                        boxes[i, j].Enabled = false;
+                    }
+                }
+            }
         }
     }
 }

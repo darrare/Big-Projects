@@ -34,6 +34,7 @@
             this.LogWindow = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.SwitchFirstLast = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // GitPull
@@ -90,11 +91,21 @@
             this.SwitchFirstLast.UseVisualStyleBackColor = true;
             this.SwitchFirstLast.Click += new System.EventHandler(this.SwitchFirstLast_Click);
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(630, 234);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(158, 13);
+            this.label2.TabIndex = 6;
+            this.label2.Text = "Build 1.0.0     2/8/2019 9:50PM";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.SwitchFirstLast);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.LogWindow);
@@ -102,7 +113,7 @@
             this.Controls.Add(this.GlobalTextBox);
             this.Controls.Add(this.GitPull);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "File Manipulation Suite";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -116,6 +127,7 @@
         private System.Windows.Forms.TextBox LogWindow;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button SwitchFirstLast;
+        private System.Windows.Forms.Label label2;
     }
 }
 

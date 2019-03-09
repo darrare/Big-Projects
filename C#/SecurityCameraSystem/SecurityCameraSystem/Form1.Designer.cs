@@ -32,6 +32,8 @@
             this.OneSecondIntervalPictureBox = new System.Windows.Forms.PictureBox();
             this.DifferencePictureBox = new System.Windows.Forms.PictureBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.IsRecordingRadioButton = new System.Windows.Forms.RadioButton();
+            this.IntensityContainerAverageTextBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.DefaultCameraPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.OneSecondIntervalPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DifferencePictureBox)).BeginInit();
@@ -71,11 +73,30 @@
             this.textBox1.Size = new System.Drawing.Size(297, 20);
             this.textBox1.TabIndex = 6;
             // 
+            // IsRecordingRadioButton
+            // 
+            this.IsRecordingRadioButton.AutoSize = true;
+            this.IsRecordingRadioButton.Location = new System.Drawing.Point(774, 12);
+            this.IsRecordingRadioButton.Name = "IsRecordingRadioButton";
+            this.IsRecordingRadioButton.Size = new System.Drawing.Size(14, 13);
+            this.IsRecordingRadioButton.TabIndex = 7;
+            this.IsRecordingRadioButton.TabStop = true;
+            this.IsRecordingRadioButton.UseVisualStyleBackColor = true;
+            // 
+            // IntensityContainerAverageTextBox
+            // 
+            this.IntensityContainerAverageTextBox.Location = new System.Drawing.Point(491, 392);
+            this.IntensityContainerAverageTextBox.Name = "IntensityContainerAverageTextBox";
+            this.IntensityContainerAverageTextBox.Size = new System.Drawing.Size(297, 20);
+            this.IntensityContainerAverageTextBox.TabIndex = 8;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.IntensityContainerAverageTextBox);
+            this.Controls.Add(this.IsRecordingRadioButton);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.DifferencePictureBox);
             this.Controls.Add(this.OneSecondIntervalPictureBox);
@@ -96,6 +117,8 @@
         private System.Windows.Forms.PictureBox OneSecondIntervalPictureBox;
         private System.Windows.Forms.PictureBox DifferencePictureBox;
         private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.RadioButton IsRecordingRadioButton;
+        private System.Windows.Forms.TextBox IntensityContainerAverageTextBox;
     }
 }
 

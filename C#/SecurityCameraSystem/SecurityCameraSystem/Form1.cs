@@ -37,7 +37,7 @@ namespace SecurityCameraSystem
         double intensityToTriggerRecording = 5;
 
         double timePerStoredUpdateInMilliseconds = 2000;
-        double timeToCollectBeforeEmailInMilliseconds = 10000;
+        double timeToCollectBeforeEmailInMilliseconds = 120000;
 
         IntensityContainer intensityContainer = new IntensityContainer();
         bool isRecording;

@@ -89,6 +89,11 @@ namespace SmashRandomPicker
             CreateSelectionPage();
         }
 
+        private void OnMarioClicked(object sender, EventArgs e)
+        {
+            OnCharacterClick("Mario", sender);
+        }
+
         private async void CreateSelectionPage()
         {
             await Navigation.PushPopupAsync(new RandomSelectionPage());

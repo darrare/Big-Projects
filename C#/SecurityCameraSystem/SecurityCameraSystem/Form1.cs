@@ -108,10 +108,9 @@ namespace SecurityCameraSystem
 
         private void SendWarningEmail(Image bitmap)
         {
-            return;
             MailAddress from = new MailAddress("RD.GeneratedEmail@gmail.com", "Ryan Darras");
             MailAddress to = new MailAddress("ryandarras@gmail.com", "Ryan Darras");
-            string fromPassword = "Google0274";
+            string phrase = "IntruderAlert";
             string subject = "Intruder Alert";
             string body = "An intruder has entered your room.";
 
@@ -122,7 +121,7 @@ namespace SecurityCameraSystem
                 EnableSsl = true,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(from.Address, fromPassword),
+                Credentials = new NetworkCredential(from.Address, phrase),
                 Timeout = 20000,
             };
 

@@ -35,6 +35,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.SwitchFirstLast = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
+            this.RemoveDuplicatesCVSButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // GitPull
@@ -57,11 +58,11 @@
             // GlobalTextBoxLabel
             // 
             this.GlobalTextBoxLabel.AutoSize = true;
-            this.GlobalTextBoxLabel.Location = new System.Drawing.Point(398, 18);
+            this.GlobalTextBoxLabel.Location = new System.Drawing.Point(409, 18);
             this.GlobalTextBoxLabel.Name = "GlobalTextBoxLabel";
-            this.GlobalTextBoxLabel.Size = new System.Drawing.Size(62, 13);
+            this.GlobalTextBoxLabel.Size = new System.Drawing.Size(51, 13);
             this.GlobalTextBoxLabel.TabIndex = 2;
-            this.GlobalTextBoxLabel.Text = "Folder Root";
+            this.GlobalTextBoxLabel.Text = "Root/File";
             // 
             // LogWindow
             // 
@@ -100,11 +101,22 @@
             this.label2.TabIndex = 6;
             this.label2.Text = "Build 1.0.0     2/8/2019 9:50PM";
             // 
+            // RemoveDuplicatesCVSButton
+            // 
+            this.RemoveDuplicatesCVSButton.Location = new System.Drawing.Point(12, 71);
+            this.RemoveDuplicatesCVSButton.Name = "RemoveDuplicatesCVSButton";
+            this.RemoveDuplicatesCVSButton.Size = new System.Drawing.Size(132, 23);
+            this.RemoveDuplicatesCVSButton.TabIndex = 7;
+            this.RemoveDuplicatesCVSButton.Text = "Remove Duplicates CVS";
+            this.RemoveDuplicatesCVSButton.UseVisualStyleBackColor = true;
+            this.RemoveDuplicatesCVSButton.Click += new System.EventHandler(this.RemoveDuplicatesCVSButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.RemoveDuplicatesCVSButton);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.SwitchFirstLast);
             this.Controls.Add(this.label1);
@@ -128,6 +140,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button SwitchFirstLast;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button RemoveDuplicatesCVSButton;
     }
 }
 

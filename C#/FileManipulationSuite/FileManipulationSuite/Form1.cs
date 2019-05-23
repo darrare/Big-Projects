@@ -101,5 +101,11 @@ namespace FileManipulationSuite
                 LogWindow.Text = ex.Message;
             }
         }
+
+        private void RemoveDuplicatesCVSButton_Click(object sender, EventArgs e)
+        {
+            RemoveDuplicateCVS newForm = new RemoveDuplicateCVS();
+            newForm.Show();
+        }
     }
 }

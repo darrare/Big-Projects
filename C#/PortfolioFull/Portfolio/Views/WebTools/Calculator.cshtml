@@ -1,0 +1,491 @@
+﻿@{
+    ViewData["Title"] = "Calculator";
+    Layout = "~/Views/Shared/_WebToolsLayout.cshtml";
+}
+
+<style>
+    table.calc, th.button, td.row {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+
+    table.calc {
+        width: 400px;
+        margin-top:15px;
+    }
+
+    th.result {
+        background-color: white;
+        text-align: right;
+        padding-right: 25px;
+    }
+
+    th.button {
+        width: 100px;
+        background-color: lightgrey;
+        text-align: center;
+    }
+
+    tr.row {
+        height: 100px;
+    }
+</style>
+
+    <table class="calc" ;="">
+        <!-- result -->
+        <tbody>
+            <tr class="row" ;="">
+                <th class="result" ;="" colspan="4"><span style="        color: lightgrey" ;=""></span><br>0</th>
+            </tr>
+            <!-- The first row -->
+            <tr class="row" ;="">
+                <th class="button" ;="">CE</th>
+                <th class="button" ;="">C</th>
+                <th class="button" ;=""></th>
+                <th class="button" ;="" style="        background-color: lightgrey;">÷</th>
+            </tr>
+            <!-- The second row -->
+            <tr class="row" ;="">
+                <th class="button" ;="">7</th>
+                <th class="button" ;="">8</th>
+                <th class="button" ;="" style="        background-color: lightgrey;">9</th>
+                <th class="button" ;="" style="        background-color: lightgrey;">*</th>
+            </tr>
+            <!-- The third row -->
+            <tr class="row" ;="">
+                <th class="button" ;="">4</th>
+                <th class="button" ;="">5</th>
+                <th class="button" ;="">6</th>
+                <th class="button" ;="" style="        background-color: lightgrey;">-</th>
+            </tr>
+            <!-- The fourth row -->
+            <tr class="row" ;="">
+                <th class="button" ;="">1</th>
+                <th class="button" ;="">2</th>
+                <th class="button" ;="">3</th>
+                <th class="button" ;="">+</th>
+            </tr>
+            <!-- The fifth and bottom row -->
+            <tr class="row" ;="">
+                <th class="button" ;=""></th>
+                <th class="button" ;="">0</th>
+                <th class="button" ;="">.</th>
+                <th class="button" ;="">=</th>
+            </tr>
+        </tbody>
+    </table>
+
+<script>
+//-----------------------------------------
+//Various variables we are going to need throughout the logic of the calculator
+//-----------------------------------------
+var concatenatedString = "";
+var resultValue = "0";
+var resultBox = document.getElementsByClassName("result")[0];
+
+//-----------------------------------------
+//Adds the functionality of mouseover and mouseexit highlighting to all of the buttons that need it.
+//-----------------------------------------
+var buttonElements = document.getElementsByTagName("th");
+
+for(var i = 0; i < buttonElements.length; i++)
+{
+	if (buttonElements[i].className !== "result" && buttonElements[i].innerHTML !== "")
+	{
+		buttonElements[i].addEventListener("mouseenter", mouseOver);
+		buttonElements[i].addEventListener("mouseleave", mouseExit);
+	}
+}
+
+function mouseOver() {
+	this.style.backgroundColor = "grey";
+}
+
+function mouseExit() {
+	this.style.backgroundColor = "lightgrey";
+}
+
+
+//-----------------------------------------
+//Adds the specific functionality for each button.
+//-----------------------------------------
+
+//Iterates through every, already stored button to assign it to a variable.
+for(var i = 0; i < buttonElements.length; i++)
+{
+	if (buttonElements[i].innerHTML === "CE")
+	{
+		buttonElements[i].addEventListener("mousedown", CEfunc); //will do the required function and change the color to indicate a click.
+		buttonElements[i].addEventListener("mouseup", mouseOver); //will change the color back to the mouseover if the mouse button comes up
+	}
+	else if (buttonElements[i].innerHTML === "C")
+	{
+		buttonElements[i].addEventListener("mousedown", Cfunc); //will do the required function and change the color to indicate a click.
+		buttonElements[i].addEventListener("mouseup", mouseOver); //will change the color back to the mouseover if the mouse button comes up
+	}
+	else if (buttonElements[i].innerHTML === "<sup>.</sup>/.")
+	{
+		buttonElements[i].addEventListener("mousedown", divisionfunc); //will do the required function and change the color to indicate a click.
+		buttonElements[i].addEventListener("mouseup", mouseOver); //will change the color back to the mouseover if the mouse button comes up
+	}
+	else if (buttonElements[i].innerHTML === "*")
+	{
+		buttonElements[i].addEventListener("mousedown", multiplicationfunc); //will do the required function and change the color to indicate a click.
+		buttonElements[i].addEventListener("mouseup", mouseOver); //will change the color back to the mouseover if the mouse button comes up
+	}
+	else if (buttonElements[i].innerHTML === "-")
+	{
+		buttonElements[i].addEventListener("mousedown", subtractionfunc); //will do the required function and change the color to indicate a click.
+		buttonElements[i].addEventListener("mouseup", mouseOver); //will change the color back to the mouseover if the mouse button comes up
+	}
+	else if (buttonElements[i].innerHTML === "+")
+	{
+		buttonElements[i].addEventListener("mousedown", additionfunc); //will do the required function and change the color to indicate a click.
+		buttonElements[i].addEventListener("mouseup", mouseOver); //will change the color back to the mouseover if the mouse button comes up
+	}
+	else if (buttonElements[i].innerHTML === "=")
+	{
+		buttonElements[i].addEventListener("mousedown", equalsfunc); //will do the required function and change the color to indicate a click.
+		buttonElements[i].addEventListener("mouseup", mouseOver); //will change the color back to the mouseover if the mouse button comes up
+	}
+	else if (buttonElements[i].innerHTML === "0")
+	{
+		buttonElements[i].addEventListener("mousedown", zerofunc); //will do the required function and change the color to indicate a click.
+		buttonElements[i].addEventListener("mouseup", mouseOver); //will change the color back to the mouseover if the mouse button comes up
+	}
+	else if (buttonElements[i].innerHTML === "1")
+	{
+		buttonElements[i].addEventListener("mousedown", onefunc); //will do the required function and change the color to indicate a click.
+		buttonElements[i].addEventListener("mouseup", mouseOver); //will change the color back to the mouseover if the mouse button comes up
+	}
+	else if (buttonElements[i].innerHTML === "2")
+	{
+		buttonElements[i].addEventListener("mousedown", twofunc); //will do the required function and change the color to indicate a click.
+		buttonElements[i].addEventListener("mouseup", mouseOver); //will change the color back to the mouseover if the mouse button comes up
+	}
+	else if (buttonElements[i].innerHTML === "3")
+	{
+		buttonElements[i].addEventListener("mousedown", threefunc); //will do the required function and change the color to indicate a click.
+		buttonElements[i].addEventListener("mouseup", mouseOver); //will change the color back to the mouseover if the mouse button comes up
+	}
+	else if (buttonElements[i].innerHTML === "4")
+	{
+		buttonElements[i].addEventListener("mousedown", fourfunc); //will do the required function and change the color to indicate a click.
+		buttonElements[i].addEventListener("mouseup", mouseOver); //will change the color back to the mouseover if the mouse button comes up
+	}
+	else if (buttonElements[i].innerHTML === "5")
+	{
+		buttonElements[i].addEventListener("mousedown", fivefunc); //will do the required function and change the color to indicate a click.
+		buttonElements[i].addEventListener("mouseup", mouseOver); //will change the color back to the mouseover if the mouse button comes up
+	}
+	else if (buttonElements[i].innerHTML === "6")
+	{
+		buttonElements[i].addEventListener("mousedown", sixfunc); //will do the required function and change the color to indicate a click.
+		buttonElements[i].addEventListener("mouseup", mouseOver); //will change the color back to the mouseover if the mouse button comes up
+	}
+	else if (buttonElements[i].innerHTML === "7")
+	{
+		buttonElements[i].addEventListener("mousedown", sevenfunc); //will do the required function and change the color to indicate a click.
+		buttonElements[i].addEventListener("mouseup", mouseOver); //will change the color back to the mouseover if the mouse button comes up
+	}
+	else if (buttonElements[i].innerHTML === "8")
+	{
+		buttonElements[i].addEventListener("mousedown", eightfunc); //will do the required function and change the color to indicate a click.
+		buttonElements[i].addEventListener("mouseup", mouseOver); //will change the color back to the mouseover if the mouse button comes up
+	}
+	else if (buttonElements[i].innerHTML === "9")
+	{
+		buttonElements[i].addEventListener("mousedown", ninefunc); //will do the required function and change the color to indicate a click.
+		buttonElements[i].addEventListener("mouseup", mouseOver); //will change the color back to the mouseover if the mouse button comes up
+	}
+	else if (buttonElements[i].innerHTML === ".")
+	{
+		buttonElements[i].addEventListener("mousedown", periodfunc); //will do the required function and change the color to indicate a click.
+		buttonElements[i].addEventListener("mouseup", mouseOver); //will change the color back to the mouseover if the mouse button comes up
+	}
+
+
+
+	//-----------------------------------------------------
+	//Functions for each of the buttons
+	//-----------------------------------------------------
+	function CEfunc()
+	{
+		this.style.backgroundColor = "darkgrey";
+		resultValue = "0";
+		drawNewToScreen();
+	}
+
+	function Cfunc()
+	{
+		this.style.backgroundColor = "darkgrey";
+	    concatenatedString = "";
+		resultValue = "0";
+		drawNewToScreen();
+	}
+
+	function divisionfunc()
+	{
+		this.style.backgroundColor = "darkgrey";
+		//if there has been no data entry thus far.
+		if (resultValue === "0" && concatenatedString === "")
+		{
+
+			return;
+		}
+		//otherwise
+		concatenatedString += resultValue + " / ";
+		drawNewToScreen();
+		resultValue = "0";
+	}
+
+	function multiplicationfunc()
+	{
+		this.style.backgroundColor = "darkgrey";
+		//if there has been no data entry thus far.
+		if (resultValue === "0" && concatenatedString === "")
+		{
+			return;
+		}
+
+		//otherwise
+		concatenatedString += resultValue + " * ";
+		drawNewToScreen();
+		resultValue = "0";
+	}
+
+	function subtractionfunc()
+	{
+		this.style.backgroundColor = "darkgrey";
+		//if there has been no data entry thus far.
+		if (resultValue === "0" && concatenatedString === "")
+		{
+			return;
+		}
+
+		//otherwise
+		concatenatedString += resultValue + " - ";
+		drawNewToScreen();
+		resultValue = "0";
+	}
+
+	function additionfunc()
+	{
+		this.style.backgroundColor = "darkgrey";
+		//if there has been no data entry thus far.
+		if (resultValue === "0" && concatenatedString === "")
+		{
+			return;
+		}
+
+		//otherwise
+		concatenatedString += resultValue + " + ";
+		drawNewToScreen();
+		resultValue = "0";
+	}
+
+	function equalsfunc()
+	{
+		this.style.backgroundColor = "darkgrey";
+		concatenatedString += resultValue;
+		var splitString = concatenatedString.split(' ');
+
+		var totalVal = 0;
+
+		//calculate the results
+		for (var i = 0; i < splitString.length; i += 2)
+		{
+			if (i === 0)
+			{
+				totalVal = parseFloat(splitString[i]);
+			}
+			else
+			{
+				if (splitString[i - 1] == "/")
+				{
+					totalVal = totalVal / parseFloat(splitString[i]);
+				}
+				else if (splitString[i - 1] == "*")
+				{
+					totalVal = totalVal * parseFloat(splitString[i]);
+				}
+				else if (splitString[i - 1] == "-")
+				{
+					totalVal = totalVal - parseFloat(splitString[i]);
+				}
+				else if (splitString[i - 1] == "+")
+				{
+					totalVal = totalVal + parseFloat(splitString[i]);
+				}
+			}
+		}
+
+		resultValue = totalVal;
+
+		//draw to screen
+		drawNewToScreen();
+
+		//set our values
+		resultValue = "0";
+		concatenatedString = "";
+	}
+
+	function zerofunc()
+	{
+		this.style.backgroundColor = "darkgrey";
+		if (resultValue === "0")
+		{
+			return;
+		}
+
+		resultValue += "0";
+		drawNewToScreen();
+	}
+
+	function onefunc()
+	{
+		this.style.backgroundColor = "darkgrey";
+		if (resultValue === "0")
+		{
+			resultValue = "1";
+		}
+		else
+		{
+			resultValue += "1";
+		}
+		drawNewToScreen();
+	}
+
+	function twofunc()
+	{
+		this.style.backgroundColor = "darkgrey";
+		if (resultValue === "0")
+		{
+			resultValue = "2";
+		}
+		else
+		{
+			resultValue += "2";
+		}
+		drawNewToScreen();
+	}
+
+	function threefunc()
+	{
+		this.style.backgroundColor = "darkgrey";
+		if (resultValue === "0")
+		{
+			resultValue = "3";
+		}
+		else
+		{
+			resultValue += "3";
+		}
+		drawNewToScreen();
+	}
+
+	function fourfunc()
+	{
+		this.style.backgroundColor = "darkgrey";
+		if (resultValue === "0")
+		{
+			resultValue = "4";
+		}
+		else
+		{
+			resultValue += "4";
+		}
+		drawNewToScreen();
+	}
+
+	function fivefunc()
+	{
+		this.style.backgroundColor = "darkgrey";
+		if (resultValue === "0")
+		{
+			resultValue = "5";
+		}
+		else
+		{
+			resultValue += "5";
+		}
+		drawNewToScreen();
+	}
+
+	function sixfunc()
+	{
+		this.style.backgroundColor = "darkgrey";
+		if (resultValue === "0")
+		{
+			resultValue = "6";
+		}
+		else
+		{
+			resultValue += "6";
+		}
+		drawNewToScreen();
+	}
+
+	function sevenfunc()
+	{
+		this.style.backgroundColor = "darkgrey";
+		if (resultValue === "0")
+		{
+			resultValue = "7";
+		}
+		else
+		{
+			resultValue += "7";
+		}
+		drawNewToScreen();
+	}
+
+	function eightfunc()
+	{
+		this.style.backgroundColor = "darkgrey";
+		if (resultValue === "0")
+		{
+			resultValue = "8";
+		}
+		else
+		{
+			resultValue += "8";
+		}
+		drawNewToScreen();
+	}
+
+	function ninefunc()
+	{
+		this.style.backgroundColor = "darkgrey";
+		if (resultValue === "0")
+		{
+			resultValue = "9";
+		}
+		else
+		{
+			resultValue += "9";
+		}
+		drawNewToScreen();
+	}
+
+	function periodfunc()
+	{
+		this.style.backgroundColor = "darkgrey";
+		if (resultValue === "0")
+		{
+			resultValue = ".";
+		}
+		else
+		{
+			resultValue += ".";
+		}
+		drawNewToScreen();
+	}
+
+	function drawNewToScreen()
+	{
+		resultBox.innerHTML = "<span style='color: lightgrey';>" + concatenatedString + "</span><br>" + resultValue;
+	}
+
+}
+</script>

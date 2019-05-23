@@ -1,0 +1,6 @@
+Forward port 8080 on https://internet.xfinity.com/network/advanced-settings/portforwarding
+D:\Repositories\CS 3020\Projects\Portfolio\.vs\Portfolio\config Add <binding protocol="http" bindingInformation="*:8080:*" /> under site bindings
+Ensure project settings point to url localhost:8080
+
+CMD netsh http add urlacl url=http://localhost:8080/ user=everyone
+netsh http delete urlacl url=http://localhost:8080/

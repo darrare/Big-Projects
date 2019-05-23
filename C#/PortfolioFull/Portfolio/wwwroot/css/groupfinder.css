@@ -1,0 +1,111 @@
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\ 
+for details on configuring this project to bundle and minify static web assets. */
+body {
+    padding-bottom: 20px;
+    background-color: #36393F;
+}
+
+/* Wrapping element */
+/* Set some basic padding to keep content from hitting the edges */
+.body-content {
+    margin-left: 200px;
+    padding-left: 15px;
+    padding-right: 15px;
+    width: auto;
+}
+
+/* Hide/rearrange for smaller screens */
+@media screen and (max-width: 700px) {
+    /* Hide captions */
+    .body-content {
+        margin-left: 0px;
+    }
+}
+
+h1 {
+    color: white;
+}
+
+h2 {
+    color: white;
+}
+
+p{
+    color: white;
+}
+li {
+    color: white;
+}
+
+
+/**************************************************/
+/* Navigation */
+/**************************************************/
+/* The side navigation menu */
+.sidebar {
+    margin: 0;
+    padding: 0;
+    width: 200px;
+    background-color: #2F3136;
+    position: fixed;
+    height: 100%;
+    overflow: auto;
+}
+
+/* Sidebar links */
+    .sidebar a {
+        display: block;
+        color: white;
+        padding: 16px;
+        text-decoration: none;
+    }
+
+/* Active/current link */
+    .sidebar a.active {
+        background-color: #36393F;
+        color: white;
+    }
+
+/* Links on mouse-over */
+    .sidebar a:hover:not(.active) {
+        background-color: #555;
+        color: white;
+    }
+
+/* Page content. The value of the margin-left property should match the value of the sidebar's width property */
+div.content {
+    margin-left: 200px;
+    padding: 1px 16px;
+    height: 1000px;
+}
+
+/* On screens that are less than 700px wide, make the sidebar into a topbar */
+@media screen and (max-width: 700px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .sidebar a {
+        float: left;
+    }
+
+    .sidebar h2 {
+        display: none;
+    }
+
+    div.content {
+        margin-left: 0;
+    }
+}
+
+/* On screens that are less than 400px, display the bar vertically, instead of horizontally */
+@media screen and (max-width: 400px) {
+    .sidebar a {
+        text-align: center;
+        float: none;
+    }
+}
+
+

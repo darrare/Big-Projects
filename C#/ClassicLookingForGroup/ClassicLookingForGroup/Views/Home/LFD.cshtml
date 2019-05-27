@@ -1,0 +1,358 @@
+﻿@model CharacterRegistrationModel
+@using ClassicLookingForGroup.RealTimeBackend;
+@using ClassicLookingForGroup.Models;
+@{
+    ViewData["Title"] = "LFD";
+    Layout = "~/Views/Shared/_GroupFinderLayout.cshtml";
+}
+
+<div id="infoHolder" class="container" style="margin-top: 15px; width: auto;">
+    <div id="faction" style="text-align:center;">
+        <div class="row">
+            <h2>What is your faction?</h2>
+        </div>
+
+        <div class="row">
+            <input id="Alliance" class="nonSelectedInput" type="image" src="~/images/FactionIcons/alliance.png" onclick="FactionClick('Alliance')" />
+            <input id="Horde" class="nonSelectedInput" type="image" src="~/images/FactionIcons/horde.png" onclick="FactionClick('Horde')" />
+        </div>
+    </div>
+    <div id="class" style="text-align:center;">
+        <div class="row">
+            <h2>What is your class?</h2>
+        </div>
+
+        <div class="row">
+            <input id="Warrior" class="nonSelectedInput" type="image" src="~/images/ClassIcons/warrior.png" onclick="ClassClick('Warrior')" />
+            <input id="Paladin" class="nonSelectedInput" type="image" src="~/images/ClassIcons/paladin.png" onclick="ClassClick('Paladin')" />
+            <input id="Hunter" class="nonSelectedInput" type="image" src="~/images/ClassIcons/hunter.png" onclick="ClassClick('Hunter')" />
+            <input id="Rogue" class="nonSelectedInput" type="image" src="~/images/ClassIcons/rogue.png" onclick="ClassClick('Rogue')" />
+            <input id="Priest" class="nonSelectedInput" type="image" src="~/images/ClassIcons/priest.png" onclick="ClassClick('Priest')" />
+            <input id="Shaman" class="nonSelectedInput" type="image" src="~/images/ClassIcons/shaman.png" onclick="ClassClick('Shaman')" />
+            <input id="Mage" class="nonSelectedInput" type="image" src="~/images/ClassIcons/mage.png" onclick="ClassClick('Mage')" />
+            <input id="Warlock" class="nonSelectedInput" type="image" src="~/images/ClassIcons/warlock.png" onclick="ClassClick('Warlock')" />
+            <input id="Druid" class="nonSelectedInput" type="image" src="~/images/ClassIcons/druid.png" onclick="ClassClick('Druid')" />
+        </div>
+
+    </div>
+    <div id="role" style="text-align:center;">
+        <div class="row">
+            <h2>What is your role?</h2>
+        </div>
+
+        <div class="row">
+            <input id="Tank" class="nonSelectedInput" type="image" src="~/images/RoleIcons/tank.png" onclick="RoleClick('Tank')" />
+            <input id="Healer" class="nonSelectedInput" type="image" src="~/images/RoleIcons/healer.png" onclick="RoleClick('Healer')" />
+            <input id="Damage" class="nonSelectedInput" type="image" src="~/images/RoleIcons/damage.png" onclick="RoleClick('Damage')" />
+        </div>
+    </div>
+    <div id="level" style="text-align:center;">
+        <div class="row">
+            <h2>What level are you?</h2>
+        </div>
+
+        <div class="row">
+            @Html.DropDownListFor(t => t.Level, new SelectList(Enumerable.Range(15, 46).Reverse()), "Level");
+        </div>
+    </div>
+    <div id="name" style="text-align:center;">
+        <div class="row">
+            <h2>What is your name?</h2>
+        </div>
+
+        <div class="row">
+            @Html.TextBoxFor(t => t.Name, "Name")
+        </div>
+    </div>
+
+    <div id="register" style="text-align: center; margin-top:15px;">
+        <button id="registerButton" type="submit">Register</button>
+    </div>
+
+    <div id="errorNotifications" style="text-align:center; margin-top: 15px;">
+        <p id="factionVerification" style="color: red; display:none"> Faction is required</p>
+        <p id="classVerification" style="color: red; display:none"> Class is required</p>
+        <p id="roleVerification" style="color: red; display:none"> Role is required</p>
+        <p id="levelVerification" style="color: red; display:none"> Level is required</p>
+        <p id="nameVerification" style="color: red; display:none"> Name is required</p>
+        <div id="setupVerification"></div>
+    </div>
+</div>
+
+<div id="successNotification" style="display:none;">
+    <h2>You have successfully joined LFD! </h2>
+    <p>Please wait to be notified when your group is found. Leaving this page will forfeit your position in queue.</p>
+</div>
+
+<hr />
+
+<div id="Status">
+    <p id="currentPositionInQueue">Your position in queue: </p>
+</div>
+
+
+<h2 class="center">Horde</h2>
+<div class="chart-container">
+    <canvas id="hordeChart" style="width:100%; height:250px;"></canvas>
+</div>
+
+<h2 class="center">Alliance</h2>
+<div class="chart-container">
+    <canvas id="allianceChart" style="width:100%; height:250px;"></canvas>
+</div>
+
+<script src="~/lib/signalr/dist/browser/signalr.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+
+
+<script type="text/javascript">
+    function UpdateChart(chartName, lbls, tankData, healerData, damageData) {
+        var ctx = document.getElementById(chartName).getContext('2d');
+        var data = {
+            labels: JSON.parse(lbls),
+            datasets: [{
+                label: "Tanks",
+                backgroundColor: 'rgba(114, 180, 196, 0.2)',
+                borderColor: 'rgba(114, 180, 196, 1)',
+                borderWidth: 1,
+                data: JSON.parse(tankData),
+            },
+            {
+                label: "Healers",
+                backgroundColor: 'rgba(116, 206, 115, 0.2)',
+                borderColor: 'rgba(116, 206, 115, 1)',
+                borderWidth: 1,
+                data: JSON.parse(healerData),
+            },
+            {
+                label: "Damage",
+                backgroundColor: 'rgba(172, 80, 79, 0.2)',
+                borderColor: 'rgba(172, 80, 79, 1)',
+                borderWidth: 1,
+                data: JSON.parse(damageData),
+            },]
+        };
+
+        var options = {
+            maintainAspectRatio: false,
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        min: 0,
+                        beginAtZero: true
+                    },
+                    gridLines: {
+                        display: true,
+                        color: "rgba(255,99,164,0.2)"
+                    }
+                }],
+                xAxes: [{
+                    ticks: {
+                        min: 0,
+                        beginAtZero: true
+                    },
+                    gridLines: {
+                        display: false
+                    }
+                }]
+            }
+        };
+
+        var myChart = new Chart(ctx, {
+            options: options,
+            data: data,
+            type: 'bar'
+        });
+    }
+</script>
+<script type="text/javascript">
+    var connection = new signalR.HubConnectionBuilder().withUrl("/CharacterRegistrationHub").build();
+
+
+    //Disable send button until connection is established
+    document.getElementById("registerButton").disabled = true;
+
+    connection.on("TeamFormedReceived", function (message) {
+        document.getElementById("Status").innerHTML = message;
+    });
+
+    connection.on("UpdateStatus", function (newPosition, aLabels, aTankData, aHealerData, aDamageData, hLabels, hTankData, hHealerData, hDamageData) {
+        UpdateChart("hordeChart", hLabels, hTankData, hHealerData, hDamageData);
+        UpdateChart("allianceChart", aLabels, aTankData, aHealerData, aDamageData);
+        document.getElementById("currentPositionInQueue").innerHTML = "Your position in queue: " + newPosition;
+    });
+
+    connection.start().then(function () {
+        document.getElementById("registerButton").disabled = false;
+
+        connection.invoke("RequestCharts").catch(function (err) {
+            return console.error(err.toString());
+        });
+    }).catch(function (err) {
+        return console.error(err.toString());
+    });
+
+    document.getElementById("registerButton").addEventListener("click", function (event) {
+        var faction = "";
+        var cls = "";
+        var role = "";
+
+        var isValid = false;
+
+        var factionInputs = document.getElementById("faction").getElementsByTagName("input");
+        for (var i = 0; i < factionInputs.length; i += 1) {
+            if (factionInputs[i].className == "selectedInput") {
+                faction = factionInputs[i].id;
+                isValid = true;
+            }
+        }
+        if (isValid == false) {
+            document.getElementById("factionVerification").style.display = "block";
+        }
+        else {
+            document.getElementById("factionVerification").style.display = "none";
+        }
+        isValid = false;
+
+        var classInputs = document.getElementById("class").getElementsByTagName("input");
+        for (var i = 0; i < classInputs.length; i += 1) {
+            if (classInputs[i].className == "selectedInput") {
+                cls = classInputs[i].id;
+                isValid = true;
+            }
+        }
+        if (isValid == false) {
+            document.getElementById("classVerification").style.display = "block";
+        }
+        else {
+            document.getElementById("classVerification").style.display = "none";
+        }
+        isValid = false;
+
+        var roleInputs = document.getElementById("role").getElementsByTagName("input");
+        for (var i = 0; i < roleInputs.length; i += 1) {
+            if (roleInputs[i].className == "selectedInput") {
+                role = roleInputs[i].id;
+                isValid = true;
+            }
+        }
+        if (isValid == false) {
+            document.getElementById("roleVerification").style.display = "block";
+        }
+        else {
+            document.getElementById("roleVerification").style.display = "none";
+        }
+        isValid = false;
+
+        var level = document.getElementById("Level").value;
+        if (level == "") {
+            document.getElementById("levelVerification").style.display = "block";
+        }
+        else {
+            document.getElementById("levelVerification").style.display = "none";
+        }
+
+        var name = document.getElementById("Name").value;
+        if (name == "") {
+            document.getElementById("nameVerification").style.display = "block";
+        }
+        else {
+            document.getElementById("nameVerification").style.display = "none";
+        }
+
+
+        var verifiers = document.getElementById("errorNotifications").getElementsByTagName("p");
+        isValid = true;
+
+        for (var i = 0; i < verifiers.length; i += 1) {
+            if (verifiers[i].style.display == "block") {
+                isValid = false;
+            }
+        }
+
+        if (isValid) {
+            var result = VerifyEligibility(cls, role, faction);
+            if (result == "") {
+                document.getElementById("infoHolder").innerHTML = "";
+                document.getElementById("successNotification").style.display = "block";
+                connection.invoke("Register", cls, role, level, faction, name).catch(function (err) {
+                    return console.error(err.toString());
+                });
+            }
+            else {
+                document.getElementById("setupVerification").innerHTML = result;
+            }
+        }
+        event.preventDefault();
+    });
+
+    function VerifyEligibility(cls, role, faction) {
+        var retVal = "";
+        if (faction == "Horde" && cls == "Paladin") {
+            retVal += "<p style=\"color:red;\">Paladins cannot be horde</p>";
+        }
+        if (faction == "Alliance" && cls == "Shaman") {
+            retVal += "<p style=\"color:red;\">Shaman cannot be alliance</P>";
+        }
+
+        if (role == "Tank") {
+            if (cls == "Hunter"
+                || cls == "Mage"
+                || cls == "Priest"
+                || cls == "Rogue"
+                || cls == "Shaman"
+                || cls == "Warlock") {
+                retVal += "<p style=\"color:red;\">" + cls + "'s cannot queue as a tank";
+            }
+        }
+        else if (role == "Healer") {
+            if (cls == "Hunter"
+                || cls == "Mage"
+                || cls == "Rogue"
+                || cls == "Warlock"
+                || cls == "Warrior") {
+                retVal += "<p style=\"color:red;\">" + cls + "'s cannot queue as a healer";
+            }
+        }
+        return retVal;
+    }
+
+</script>
+
+<script type="text/javascript">
+    function ClassClick(clickedVal) {
+        var classInputs = document.getElementById("class").getElementsByTagName("input");
+        for (var i = 0; i < classInputs.length; i += 1) {
+            if (classInputs[i].id == clickedVal) {
+                classInputs[i].className = "selectedInput";
+            }
+            else {
+                classInputs[i].className = "nonSelectedInput";
+            }
+        }
+    }
+
+    function FactionClick(clickedVal) {
+        var factionInputs = document.getElementById("faction").getElementsByTagName("input");
+        for (var i = 0; i < factionInputs.length; i += 1) {
+            if (factionInputs[i].id == clickedVal) {
+                factionInputs[i].className = "selectedInput";
+            }
+            else {
+                factionInputs[i].className = "nonSelectedInput";
+            }
+        }
+    }
+
+    function RoleClick(clickedVal) {
+        var roleInputs = document.getElementById("role").getElementsByTagName("input");
+        for (var i = 0; i < roleInputs.length; i += 1) {
+            if (roleInputs[i].id == clickedVal) {
+                roleInputs[i].className = "selectedInput";
+            }
+            else {
+                roleInputs[i].className = "nonSelectedInput";
+            }
+        }
+    }
+</script>

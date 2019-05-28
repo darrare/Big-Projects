@@ -65,7 +65,9 @@
         </div>
     </div>
 
+    <!--Button functionality added via javascript-->
     <div id="register" style="text-align: center; margin-top:15px;">
+        <button id="addPartyMember" type="submit">Add Member</button>
         <button id="registerButton" type="submit">Register</button>
     </div>
 
@@ -87,7 +89,6 @@
 <hr />
 
 <div id="Status">
-    <p id="currentPositionInQueue">Your position in queue: </p>
 </div>
 
 
@@ -106,6 +107,8 @@
 
 
 <script type="text/javascript">
+    var allianceChart;
+    var hordeChart;
     function UpdateChart(chartName, lbls, tankData, healerData, damageData) {
         var ctx = document.getElementById(chartName).getContext('2d');
         var data = {
@@ -158,11 +161,27 @@
             }
         };
 
-        var myChart = new Chart(ctx, {
-            options: options,
-            data: data,
-            type: 'bar'
-        });
+        if (chartName == "allianceChart") {
+            if (allianceChart != null) {
+                allianceChart.destroy();
+            }
+            allianceChart = new Chart(ctx, {
+                options: options,
+                data: data,
+                type: 'bar'
+            });
+            
+        }
+        else {
+            if (hordeChart != null) {
+                hordeChart.destroy();
+            }
+            hordeChart = new Chart(ctx, {
+                options: options,
+                data: data,
+                type: 'bar'
+            });
+        }
     }
 </script>
 <script type="text/javascript">
@@ -176,10 +195,13 @@
         document.getElementById("Status").innerHTML = message;
     });
 
-    connection.on("UpdateStatus", function (newPosition, aLabels, aTankData, aHealerData, aDamageData, hLabels, hTankData, hHealerData, hDamageData) {
+    connection.on("UpdateStatus", function (aLabels, aTankData, aHealerData, aDamageData, hLabels, hTankData, hHealerData, hDamageData) {
         UpdateChart("hordeChart", hLabels, hTankData, hHealerData, hDamageData);
         UpdateChart("allianceChart", aLabels, aTankData, aHealerData, aDamageData);
-        document.getElementById("currentPositionInQueue").innerHTML = "Your position in queue: " + newPosition;
+    });
+
+    connection.on("UpdatePartyInfo", function (message) {
+        document.getElementById("Status").innerHTML = message;
     });
 
     connection.start().then(function () {
@@ -192,6 +214,7 @@
         return console.error(err.toString());
     });
 
+    //REGISTER BUTTON CLICK
     document.getElementById("registerButton").addEventListener("click", function (event) {
         var faction = "";
         var cls = "";

@@ -11,9 +11,9 @@ namespace ClassicLookingForGroup.Hubs
     public class CharacterRegistrationHub : Hub
     {
         /// <summary>
-        /// Updates the charts on all clients
+        /// Updates the charts on a specific client.
+        /// Called only once when they first open the page.
         /// </summary>
-        /// <returns></returns>
         public async Task RequestCharts()
         {
             await UpdateClients(Context.ConnectionId);
@@ -82,6 +82,10 @@ namespace ClassicLookingForGroup.Hubs
             await base.OnDisconnectedAsync(exception);
         }
 
+        /// <summary>
+        /// Sends a message to every client to update their graphs
+        /// </summary>
+        /// <param name="guid">Optional param. If input only sends update to that person.</param>
         public async Task UpdateClients(string guid = "")
         {
             string aLabels = Newtonsoft.Json.JsonConvert.SerializeObject(ClientManager.AllianceChart.Select(t => t.DimensionOne).ToList());

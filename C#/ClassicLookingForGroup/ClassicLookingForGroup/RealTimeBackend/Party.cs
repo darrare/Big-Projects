@@ -12,6 +12,11 @@ namespace ClassicLookingForGroup.RealTimeBackend
 
         public Client[] Damage { get; set; } = new Client[3];
 
+        /// <summary>
+        /// This is what is displayed on the web page after a person has entered the queue. 
+        /// Gets updated every time the party is updated.
+        /// </summary>
+        /// <returns>The string to put as the innerHTML element</returns>
         public string GeneratePartyInfoHTML()
         {
             string retVal = "";
@@ -23,11 +28,28 @@ namespace ClassicLookingForGroup.RealTimeBackend
             return retVal;
         }
 
+        /// <summary>
+        /// Should probably refactor?
+        /// Simply determines if the party is complete by checking if the count is 5.
+        /// </summary>
+        /// <returns>
+        /// True: Party has 5 members and is complete.
+        /// False: Party does not yet have 5 members.
+        /// </returns>
         public bool IsValidParty()
         {
             return GetParty().Count == 5;
         }
 
+        /// <summary>
+        /// Inserts a party member into the party.
+        /// When a client is added to the system, this method is called on every available party to attempt to place them in the first available spot.
+        /// </summary>
+        /// <param name="c">The client to insert into the party</param>
+        /// <returns>
+        /// True: Member was successfully inserted into the party.
+        /// False: Member could not join this party, either due to being out of the level range or unable to fill the needed role.
+        /// </returns>
         public bool InsertPartyMember(Client c)
         {
             //If they aren't within a reasonable level range, don't bother adding them
@@ -50,6 +72,14 @@ namespace ClassicLookingForGroup.RealTimeBackend
             return isSuccess;
         }
 
+        /// <summary>
+        /// Averages the levels of the party so only parties with close level ranges are accepted.
+        /// </summary>
+        /// <param name="c">The client to check if they are compatible with this party (level wise)</param>
+        /// <returns>
+        /// True: Client is within the average range of this party.
+        /// False: Client is not within the average range of this party.
+        /// </returns>
         private bool IsPotentialNewMemberInLevelRange(Client c)
         {
             float levelAverage = 0;
@@ -65,7 +95,7 @@ namespace ClassicLookingForGroup.RealTimeBackend
             if (playerCount == 0) return true;
 
             levelAverage /= playerCount;
-            return MathF.Abs(levelAverage - c.Model.Level) <= 4;
+            return MathF.Abs(levelAverage - c.Model.Level) <= 5;
         }
 
         /// <summary>

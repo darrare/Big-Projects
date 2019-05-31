@@ -62,7 +62,18 @@ namespace FileManipulationSuite
             {
                 foreach(var g in grouped)
                 {
-                    sr.WriteLine("new," + g.Key + ",public,");
+                    string newLine = "";
+                    for (int i = 0; i < g.First().Count; i++)
+                    {
+                        if (i + 1 == sectionToCompare)
+                            newLine += g.Key;
+                        else
+                            newLine += g.First()[i];
+
+                        if(i != g.First().Count - 1)
+                            newLine += ",";
+                    }
+                    sr.WriteLine(newLine);
                 }
             }
             this.Close();

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using ClassicLookingForGroup.RealTimeBackend;
+using System.Data.SqlClient;
 
 namespace ClassicLookingForGroup.Hubs
 {
@@ -31,6 +32,14 @@ namespace ClassicLookingForGroup.Hubs
         /// <param name="name">Clients name</param>
         public async Task Register(string cls, string role, string level, string faction, string name)
         {
+            using (SqlConnection conn = new SqlConnection())
+            {
+                conn.ConnectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"D:\\Repositories\\Big Projects\\C#\\ClassicLookingForGroup\\ClassicLookingForGroup\\DB.mdf\";Integrated Security=True;Connect Timeout=2";
+                conn.Open();
+                SqlCommand command = new SqlCommand($"INSERT INTO history VALUES ('{cls}', '{role}', '{level}', '{faction}', '{name}')", conn);
+                command.ExecuteNonQuery();
+            }
+
             List<Client> newParty;
             //If a new list is formed, it means that party is complete and ready to go. They have already been removed from the collection.
             if ((newParty = ClientManager.AddClient(new Client(Context.ConnectionId,

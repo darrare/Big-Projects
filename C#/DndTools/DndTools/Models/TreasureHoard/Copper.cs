@@ -11,5 +11,10 @@ namespace DndTools.Models.TreasureHoard
         public int Value { get; set; }
 
         public float ConvertToGpValue() => (float)Value / 100f;
+
+        public Copper(string advancedDiceFormat)
+        {
+            Value = DiceRoller.RollForSum(advancedDiceFormat);
+        }
     }
 }

@@ -7,9 +7,16 @@ namespace DndTools.Models.TreasureHoard
 {
     public class TreasureHoardModel
     {
+        public Currency Currency { get; set; }
+
         public TreasureHoardModel()
         {
 
+        }
+
+        public void GenerateHoard(int challengeLevel, string currencyRollingGuideJson)
+        {
+            Currency = new Currency(challengeLevel, currencyRollingGuideJson);
         }
     }
 }

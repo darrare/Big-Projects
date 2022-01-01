@@ -160,6 +160,12 @@ namespace DndTools.Models.TreasureHoard.Helpers
             }
         }
 
+        /// <summary>
+        /// Rolls based on the advancedDiceFormat and returns the sum value.
+        /// </summary>
+        /// <param name="advancedDiceFormat">Format</param>
+        /// <param name="ifDivisionRoundUp">Division truncates. 5/2 = 2 for example. This will round up instead of round down.</param>
+        /// <returns>Integer of the dice value</returns>
         public static int RollForSum(string advancedDiceFormat, bool ifDivisionRoundUp = false)
         {
             bool[] charTracker = new bool[advancedDiceFormat.Length];
